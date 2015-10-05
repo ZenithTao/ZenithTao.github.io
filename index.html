@@ -171,6 +171,76 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-LeetCode-LinkedList-Copy-List-with-Random-Pointer" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/10/05/LeetCode-LinkedList-Copy-List-with-Random-Pointer/" class="article-date">
+  	<time datetime="2015-10-05T20:46:55.000Z" itemprop="datePublished">2015-10-05</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/10/05/LeetCode-LinkedList-Copy-List-with-Random-Pointer/">LeetCode-LinkedList: Copy List with Random Pointer</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>题干如下:</p>
+<blockquote>
+<p>A linked list is given such that each node contains an additional random pointer which could point to any node in the list or null.</p>
+<p>Return a deep copy of the list. </p>
+</blockquote>
+<p><br><br>说实话，看到题目没什么思路，也不懂什么叫 <strong> deep copy </strong>。</p>
+<p>参考了网上的题目，这道题要求的其实是能够创建一条完整的linkedlist,然后这条链表中所有的nodes跟next指针都是新创建出来的，也就是说新的链表与旧的没有重叠(感觉有点过度解释了….)。  </p>
+<p>很容易想到就是两个指针，一新一旧copy就行了，但问题是一旦存在random指针后，random可能指向一个尚未出现在链表中靠后的node，那么如果我们直接用原链表node的值新建node后，怎么保证之后继续做链表复制时其他存在next指向该node的指针？</p>
+<blockquote>
+<p><strong> 为了确保这一点，HashMap就派上用场了, 我们可以把 <key, value=""> Pair中的Key设为原链表中的node，Value设为新链表中对应该node的复制node，一遍traversal之后，我们就有了复制好的除random指针外的新链表 </key,></strong>。</p>
+<p><strong> 之后再进行一遍traversal，针对每个原node1的random指针指向的node2, 我们通过HashMap中与node2匹配的新链表中node3, 然后让新链表中当前指针指向node3就行了 </strong>。</p>
+</blockquote>
+<p><strong> 具体code如下: </strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span><br><span class="line"> * Definition for singly-linked list with a random pointer.</span><br><span class="line"> * class RandomListNode &#123;</span><br><span class="line"> *     int label;</span><br><span class="line"> *     RandomListNode next, random;</span><br><span class="line"> *     RandomListNode(int x) &#123; this.label = x; &#125;</span><br><span class="line"> * &#125;;</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> RandomListNode <span class="title">copyRandomList</span><span class="params">(RandomListNode head)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (head == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        HashMap&lt;RandomListNode, RandomListNode&gt; map = <span class="keyword">new</span> HashMap&lt;RandomListNode, RandomListNode&gt;();</span><br><span class="line">        RandomListNode dummy = <span class="keyword">new</span> RandomListNode(-<span class="number">1</span>);</span><br><span class="line">        RandomListNode new_head = <span class="keyword">new</span> RandomListNode(head.label);</span><br><span class="line">        RandomListNode old_head = head;</span><br><span class="line">        dummy.next = new_head;</span><br><span class="line">        map.put(head, new_head);</span><br><span class="line">        old_head = old_head.next;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">while</span> (old_head != <span class="keyword">null</span>) &#123;</span><br><span class="line">            RandomListNode temp = <span class="keyword">new</span> RandomListNode(old_head.label);</span><br><span class="line">            new_head.next = temp;</span><br><span class="line">            map.put(old_head, temp);</span><br><span class="line">            new_head = new_head.next;</span><br><span class="line">            old_head = old_head.next;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        old_head = head;</span><br><span class="line">        new_head = dummy.next;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">while</span> (old_head != <span class="keyword">null</span>) &#123;</span><br><span class="line">            new_head.random = map.get(old_head.random);</span><br><span class="line">            new_head = new_head.next;</span><br><span class="line">            old_head = old_head.next;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> dummy.next;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>一开始自己没有理解HashMap中需要放的是原node - 新node对，所以解法没怎么看懂。一旦理解到了这一点，这题也就不难了，下次刷的时候再看看吧 :)</p>
+<p><br><br>其实该题还有一种解法只需要O(1)的空间，但需要traverse整个原list三遍，等下次再刷的时候再更新吧！</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LeetCode/">LeetCode</a></li></ul>
+	</div>
+
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+  
     <article id="blog-LeetCode-LinkedList-Reverse-Linked-List-I-II" class="article article-type-blog" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -199,16 +269,18 @@
       
         <p>今天做到了Reverse LinkedList I II。其实自己一直对链表这种题目不是很有信心，虽然不是很难，但做起来里面的细节也是很棘手，看完答案当时能写出来，可真正面试的时候不一定能bug-free一遍撸出。</p>
 <p>下面就总结一下链表翻转的心得：</p>
-<p>一旦碰上链表翻转，最好有三个node来操作，pre, node1, node2。pre对应要翻转的node前一个node，node1对应想翻转的(单个node或node串的)第一个node，node2就对应想要翻转到p1前的node。</p>
-<p>比如 p1-&gt;p2-&gt;p3-&gt;p4-&gt;p5-&gt;null 这一链表想要翻转p2, p3</p>
-<p>想要翻转p2和p3,那么pre就是p1，node1就是p2, node2就是p3</p>
+<p><strong>一旦碰上链表翻转，最好有三个node来操作，pre, node1, node2。pre对应要翻转的node前一个node，node1对应想翻转的(单个node或node串的)第一个node，node2就对应想要翻转到p1前的node。</strong></p>
+<blockquote>
+<p>比如 p1-&gt;p2-&gt;p3-&gt;p4-&gt;p5-&gt;null 这一链表想要翻转p2, p3, 那么pre就是p1，node1就是p2, node2就是p3</p>
 <p>翻转的过程一般如下<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">node1.<span class="keyword">next</span> = node2.<span class="keyword">next</span>;</span><br><span class="line">node2.<span class="keyword">next</span> = pre.<span class="keyword">next</span>;</span><br><span class="line">pre.<span class="keyword">next</span> = node2;</span><br><span class="line">node2 = node1.<span class="keyword">next</span>;</span><br><span class="line"><span class="comment">// 让node2继续成为想要翻转到p1前的node</span></span><br><span class="line"><span class="comment">// 一次操作下来node1还是对应想翻转的(单个node或node串的)第一个node</span></span><br><span class="line"><span class="comment">// pre也没变，还是对应要翻转的node前一个node</span></span><br></pre></td></tr></table></figure></p>
 <p>这样一次操作下来链表为<br>    p1-&gt;p3-&gt;p2-&gt;p4-&gt;p5-&gt;null</p>
 <p>此时pre仍为p1, node1为p2, node2为p4。 如果此时继续想翻转, 只需把p3-&gt;p2当做一个整体，我们的目标是把p4翻转到p3-&gt;p2这个整体的前面，那么继续我们之前的操作就可以了。</p>
 <p>上面过程的精髓就是，node1不会变，永远是对应一开始想要翻转的node(串)的头，pre也不会变，唯一移动的就是node2。</p>
+</blockquote>
 <p>好了，理解上面的翻转过程后，两道Reverse LinkedList I II 也就迎刃而解了，不是太难。II中我们只要确保能够找到正确的pre,并且控制好想要翻转的范围就行了，代码如下</p>
 <p>Reverse LinkedList I<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ListNode</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> val;</span><br><span class="line">	ListNode next;		</span><br><span class="line">	ListNode(<span class="keyword">int</span> x) &#123; val = x; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ListNode <span class="title">reverseList</span><span class="params">(ListNode head)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (head == <span class="keyword">null</span> || head.next == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> head;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        ListNode save_head = <span class="keyword">new</span> ListNode(-<span class="number">1</span>);</span><br><span class="line">        save_head.next = head;</span><br><span class="line">        ListNode pre = save_head;</span><br><span class="line">        ListNode p1 = head;</span><br><span class="line">        ListNode p2 = p1.next;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">while</span> (p2 != <span class="keyword">null</span>) &#123;</span><br><span class="line">            p1.next = p2.next;</span><br><span class="line">            p2.next = pre.next;</span><br><span class="line">            pre.next = p2;</span><br><span class="line">            p2 = p1.next;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> save_head.next;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>Reverse LinkedList II<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> ListNode &#123;</span><br><span class="line">	<span class="keyword">int</span> val;</span><br><span class="line">	ListNode <span class="keyword">next</span>;		</span><br><span class="line">	ListNode(<span class="keyword">int</span> x) &#123; val = x; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> Solution &#123;</span><br><span class="line">    <span class="keyword">public</span> ListNode reverseBetween(ListNode head, <span class="keyword">int</span> m, <span class="keyword">int</span> n) &#123;</span><br><span class="line">        <span class="keyword">if</span> (head == <span class="keyword">null</span> || head.<span class="keyword">next</span> == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> head;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// save the old head</span></span><br><span class="line">        ListNode save_head = <span class="keyword">new</span> ListNode(-<span class="number">1</span>);</span><br><span class="line">        save_head.<span class="keyword">next</span> = head;</span><br><span class="line">        <span class="comment">// set the pre</span></span><br><span class="line">        ListNode pre = save_head;</span><br><span class="line">        ListNode n1 = <span class="keyword">null</span>;</span><br><span class="line">        ListNode n2 = <span class="keyword">null</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (i &lt; m) &#123;</span><br><span class="line">                pre = pre.<span class="keyword">next</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (i == m) &#123;</span><br><span class="line">                n1 = pre.<span class="keyword">next</span>;</span><br><span class="line">                n2 = n1.<span class="keyword">next</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                n1.<span class="keyword">next</span> = n2.<span class="keyword">next</span>;</span><br><span class="line">                n2.<span class="keyword">next</span> = pre.<span class="keyword">next</span>;</span><br><span class="line">                pre.<span class="keyword">next</span> = n2;</span><br><span class="line">                n2 = n1.<span class="keyword">next</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> save_head.<span class="keyword">next</span>;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong> 实话说，在LeetCode中，链表的题还是属于容易到简单的程度的。掌握了一定解题技巧加多练，面试时候一遍撸出难度还是不高的:)     </strong>    </p>
 
       
     </div>
