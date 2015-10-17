@@ -171,6 +171,64 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-LeetCode-Math-Max-Points-On-a-Line" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/10/17/LeetCode-Math-Max-Points-On-a-Line/" class="article-date">
+  	<time datetime="2015-10-17T19:49:39.000Z" itemprop="datePublished">2015-10-17</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/10/17/LeetCode-Math-Max-Points-On-a-Line/">LeetCode-Math: Max Points On a Line</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这道题其实不难，但一开始想的时候，每个点与另外一个点进行求斜率的话，会不会是多算了一遍？其实多想了，在对每个点开始循环计算的时候，HashMap<slope(float), slope的个数(integer)=""> 都会被重置，然后用另外一个点与该点计算slope时，不会出现重合情况，是多少就是多少。</slope(float),></p>
+<blockquote>
+<p><strong> 该题另外要注意的是可能会出现重合点，即是每次循环，对points[i], 可能存在points[j]与之重合，那么我们可以在该外循环中加上一个local变量same, 每次相等时就same++, 最后跳出里循环，找到在HashMap中存在的最大Local Max后，加上该same值，然后再与global的Max比较从而更新global的Max值。</strong>    </p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="javadoc">/**</span><br><span class="line"> * Definition for a point.</span><br><span class="line"> * class Point &#123;</span><br><span class="line"> *     int x;</span><br><span class="line"> *     int y;</span><br><span class="line"> *     Point() &#123; x = 0; y = 0; &#125;</span><br><span class="line"> *     Point(int a, int b) &#123; x = a; y = b; &#125;</span><br><span class="line"> * &#125;</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxPoints</span><span class="params">(Point[] points)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (points == <span class="keyword">null</span> || points.length == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">int</span> max = <span class="number">1</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; points.length; i++) &#123;</span><br><span class="line">            <span class="comment">// create a map to store every slope in each loop of finding the result</span></span><br><span class="line">            HashMap&lt;Float, Integer&gt; slope_map = <span class="keyword">new</span> HashMap&lt;Float, Integer&gt;();</span><br><span class="line">            <span class="keyword">int</span> local_max = <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">int</span> same = <span class="number">0</span>;</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; points.length; j++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (i == j) &#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                </span><br><span class="line">                <span class="keyword">if</span> (points[i].x == points[j].x &amp;&amp; points[i].y == points[j].y) &#123;</span><br><span class="line">                    same++;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                </span><br><span class="line">                <span class="keyword">float</span> slope = (<span class="keyword">float</span>)(points[j].y - points[i].y) / (points[j].x - points[i].x);</span><br><span class="line">                </span><br><span class="line">                <span class="keyword">if</span> (!slope_map.containsKey(slope)) &#123;</span><br><span class="line">                    slope_map.put(slope, <span class="number">2</span>);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    slope_map.put(slope, slope_map.get(slope) + <span class="number">1</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">           <span class="keyword">for</span> (<span class="keyword">int</span> p : slope_map.values()) &#123;</span><br><span class="line">               local_max = Math.max(local_max, p);</span><br><span class="line">           &#125;</span><br><span class="line">        </span><br><span class="line">           local_max += same;</span><br><span class="line">           max = Math.max(local_max, max);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> max;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LeetCode/">LeetCode</a></li></ul>
+	</div>
+
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+  
     <article id="post-LeetCode-LinkedList-Copy-List-with-Random-Pointer" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
