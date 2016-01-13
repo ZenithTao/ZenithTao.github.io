@@ -217,7 +217,7 @@
 <p><strong>一旦碰上链表翻转，最好有三个node来操作，pre, node1, node2。pre对应要翻转的node前一个node，node1对应想翻转的(单个node或node串的)第一个node，node2就对应想要翻转到p1前的node。</strong></p>
 <blockquote>
 <p>比如 p1-&gt;p2-&gt;p3-&gt;p4-&gt;p5-&gt;null 这一链表想要翻转p2, p3, 那么pre就是p1，node1就是p2, node2就是p3</p>
-<p>翻转的过程一般如下<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">node1.<span class="keyword">next</span> = node2.<span class="keyword">next</span>;</span><br><span class="line">node2.<span class="keyword">next</span> = pre.<span class="keyword">next</span>;</span><br><span class="line">pre.<span class="keyword">next</span> = node2;</span><br><span class="line">node2 = node1.<span class="keyword">next</span>;</span><br><span class="line"><span class="comment">// 让node2继续成为想要翻转到p1前的node</span></span><br><span class="line"><span class="comment">// 一次操作下来node1还是对应想翻转的(单个node或node串的)第一个node</span></span><br><span class="line"><span class="comment">// pre也没变，还是对应要翻转的node前一个node</span></span><br></pre></td></tr></table></figure></p>
+<p>翻转的过程一般如下<br><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">node1.next = node2.next;</span><br><span class="line">node2.next = pre.next;</span><br><span class="line">pre.next = node2;</span><br><span class="line">node2 = node1.next;</span><br><span class="line">// 让node2继续成为想要翻转到p1前的<span class="keyword">node</span><span class="identifier"></span><br><span class="line"></span><span class="title">// 一次操作下来node1</span>还是对应想翻转的(单个<span class="keyword">node</span><span class="identifier"></span><span class="title">或node</span>串的)第一个<span class="keyword">node</span><span class="identifier"></span><br><span class="line"></span><span class="title">// pre</span>也没变，还是对应要翻转的<span class="keyword">node</span><span class="identifier"></span><span class="title">前一个node</span></span><br></pre></td></tr></table></figure></p>
 <p>这样一次操作下来链表为<br>    p1-&gt;p3-&gt;p2-&gt;p4-&gt;p5-&gt;null</p>
 <p>此时pre仍为p1, node1为p2, node2为p4。 如果此时继续想翻转, 只需把p3-&gt;p2当做一个整体，我们的目标是把p4翻转到p3-&gt;p2这个整体的前面，那么继续我们之前的操作就可以了。</p>
 <p>上面过程的精髓就是，node1不会变，永远是对应一开始想要翻转的node(串)的头，pre也不会变，唯一移动的就是node2。</p>
@@ -316,7 +316,7 @@
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2015 且听风吟
+    		&copy; 2016 且听风吟
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
